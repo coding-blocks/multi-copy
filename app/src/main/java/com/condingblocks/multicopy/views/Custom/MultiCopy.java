@@ -172,6 +172,8 @@ public class MultiCopy extends View {
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
+
+
         return view;
     }
 
