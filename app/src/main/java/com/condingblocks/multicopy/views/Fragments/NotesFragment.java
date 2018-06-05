@@ -113,24 +113,35 @@ public class NotesFragment extends Fragment implements onNotesEdit,onNewNote{
     public void onNotesEdit(String notes, int position) {
         if (notesFragment_LOG)
         Log.d(TAG, "onNotesEdit: " + notes);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        notesList.get(position).setNote(notes);
-        realm.copyToRealm(notesList.get(position));
-        notesAdapter.notifyItemChanged(position);
-        realm.commitTransaction();
+
+        //vasudev13: Avoiding editing of existing note to blank note
+
+        if(!notes.isEmpty()) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            notesList.get(position).setNote(notes);
+            realm.copyToRealm(notesList.get(position));
+            notesAdapter.notifyItemChanged(position);
+            realm.commitTransaction();
+        }
     }
 
     @Override
     public void onNewNote(String note,String createdAt) {
         if (notesFragment_LOG)
         Log.d(TAG, "onNewNote: " + note  +  " " + createdAt);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        notesList.add(new NotesModel(note,createdAt));
-        realm.copyToRealmOrUpdate(notesList);
-        realm.commitTransaction();
-        notesAdapter.notifyDataSetChanged();
+
+        //vasudev13: Avoiding addition of blank notes to list
+
+        if(!note.isEmpty() && !createdAt.isEmpty()) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            notesList.add(new NotesModel(note, createdAt));
+            realm.copyToRealmOrUpdate(notesList);
+            realm.commitTransaction();
+            notesAdapter.notifyDataSetChanged();
+        }
+        Log.d("onNewNote",notesList.size()+"");
     }
 
     //deletefrom Notes List
